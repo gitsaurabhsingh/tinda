@@ -1,0 +1,165 @@
+@extends('layouts.app')
+@section('title', $category->name . ' - Category')
+@section('content')
+
+<!-- Animated Category Banner Hero -->
+<section class="position-relative overflow-hidden" style="height: 60vh; min-height: 500px;">
+    <!-- Animated Background Image -->
+    <div class="banner-bg-animated position-absolute top-0 start-0 w-100 h-100" style="background: url('{{ $category->image ? asset($category->image) : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80' }}') center/cover no-repeat;"></div>
+    
+    <!-- Deep Gradient Overlay -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0.1) 100%);"></div>
+    
+    <div class="container h-100 position-relative z-index-2 d-flex flex-column justify-content-center align-items-center text-center text-white" data-aos="zoom-out" data-aos-duration="1200">
+        <span class="badge rounded-pill bg-white text-dark px-4 py-2 fw-bold mb-4 shadow-lg text-uppercase" style="letter-spacing: 2px;">
+            <i class="fa-solid fa-folder-open text-primary me-2"></i> Category
+        </span>
+        <h1 class="display-1 fw-bolder mb-3 text-white drop-shadow-lg" style="text-transform: uppercase; letter-spacing: -2px;">{{ $category->name }}</h1>
+        <p class="lead mx-auto text-white-50" style="max-width: 650px;">
+            Explore our meticulously curated collection of the latest articles, insights, and stories regarding {{ $category->name }}.
+        </p>
+    </div>
+    <!-- Animated SVG Wave Divider -->
+    <div class="position-absolute bottom-0 start-0 w-100" style="height: 100px; overflow: hidden; line-height: 0;">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 100px; display: block; transform: rotate(180deg);">
+            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="#f8f9fa"></path>
+            <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" fill="#f8f9fa"></path>
+            <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="#f8f9fa"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Blogs Grid -->
+<div class="container-fluid px-4 px-lg-5 my-5 py-4">
+    <div class="row g-5">
+        @forelse($paginatedBlogs as $index => $blog)
+        <div class="col-xxl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ ($index % 4) * 100 }}">
+            <a href="{{ route('page.show', $blog->slug) }}" class="text-decoration-none h-100 d-block">
+                <div class="card premium-blog-card h-100 border-0 bg-white">
+                    <div class="card-img-wrapper position-relative" style="height: 240px; overflow: hidden; border-radius: 20px 20px 0 0;">
+                        <img src="{{ $blog->featured_image ?? asset('assets/images/default-blog.jpg') }}" alt="{{ $blog->title }}" loading="lazy" width="400" height="250" class="category-image w-100 h-100">
+                        <span class="badge bg-white text-dark position-absolute top-0 start-0 m-3 rounded-pill px-3 py-2 shadow-sm d-flex align-items-center gap-2 fw-bold" style="width: fit-content;">
+                            <div class="pulse-dot"></div> {{ $blog->categories->first()->name ?? 'Uncategorized' ?? 'Update' }}
+                        </span>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column bg-white">
+                        <h4 class="card-title fw-bolder text-dark mb-3 line-clamp-2" style="font-size: 1.35rem; line-height: 1.4;">{{ $blog->title }}</h4>
+                        <p class="card-text text-muted small mb-4 line-clamp-3">{{ Str::limit($blog->excerpt, 120) }}</p>
+                        
+                        <div class="mt-auto d-flex align-items-center justify-content-between border-top pt-4">
+                            <div class="d-flex align-items-center">
+                                <div class="author-avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 32px; height: 32px; font-size: 0.8rem; margin-right: 10px;">
+                                    {{ substr($blog->user->name ?? 'Admin', 0, 1) }}
+                                </div>
+                                <span class="text-dark fw-bold small">{{ $blog->user->name ?? 'Admin' }}</span>
+                            </div>
+                            <span class="text-muted small fw-medium"><i class="fa-regular fa-calendar-days me-1"></i> {{ $blog->created_at->format('M d, Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        @empty
+        <div class="col-12 text-center py-5">
+            <div class="py-5 bg-light rounded-4 border border-dashed mx-auto" style="max-width: 600px;">
+                <i class="fa-solid fa-pen-nib text-muted mb-3" style="font-size: 3rem;"></i>
+                <h4 class="fw-bold text-dark">No Articles Found</h4>
+                <p class="text-muted mb-0">Check back later for new updates in the {{ $category->name }} category.</p>
+            </div>
+        </div>
+        @endforelse
+    </div>
+    
+    <div class="d-flex justify-content-center mt-5 pt-3 custom-pagination">
+        {{ $paginatedBlogs->links('pagination::bootstrap-5') }}
+    </div>
+</div>
+
+<style>
+/* Banner Animations */
+.banner-bg-animated {
+    animation: panZoom 25s infinite alternate ease-in-out;
+}
+
+@keyframes panZoom {
+    0% { transform: scale(1.0) translate(0, 0); }
+    100% { transform: scale(1.15) translate(-2%, -2%); }
+}
+
+.drop-shadow-lg {
+    text-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
+
+/* Premium Blog Card Design */
+.premium-blog-card {
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-bottom: 3px solid transparent;
+}
+
+.premium-blog-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    border-bottom: 3px solid var(--bs-primary);
+}
+
+/* Image Hover Zoom */
+.category-image {
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.premium-blog-card:hover .category-image {
+    transform: scale(1.08);
+}
+
+/* Animated Pulse Dot */
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--bs-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0.7);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(var(--bs-primary-rgb), 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0); }
+}
+
+/* Utilities */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.border-dashed {
+    border-style: dashed !important;
+    border-width: 2px !important;
+}
+
+.custom-pagination .page-link {
+    border-radius: 8px;
+    margin: 0 4px;
+    border: none;
+    color: #4b5563;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.custom-pagination .page-item.active .page-link {
+    background-color: var(--bs-primary);
+    color: white;
+}
+</style>
+
+@endsection
